@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: Payment Service API
+  description: >-
+    Processing payments for movie tickets. Handles credit card transactions and/or refunds.
+  version: 1.0.0
+servers:
+  - url: https://api.movietheater.com/v1
+
+paths:
+  /payment/{IDNum}:
+    get:
+      summary: Get payment status for purchased movie tickets using the ID
+      parameters:
+        - name: IDNum
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        '404':
+          description: Payment not found & invalid
+          
+    delete:
+      summary: Refund payment
+      parameters:
+        - name: IDNum
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Refund successful
+        '404':
+          description: Transaction not found
+        '500':
+          description: Refund failed
+
+  # POST /payments (Rubric: POST with requestBody + 2+ responses)
+  /payment:
+    post:
+      summary: Process payment for purchasing movie tickets off a website
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardNumber:
+                  type: string
+                  description: card details for transaction
+                amount:
+                  type: number
+                  description: amount to be paid
+                user:
+                  type: string
+                  description: user ID details for transaction
+                ticketID:
+                  type: string
+                  description: details for what ticket is purchased
+              required:
+                - cardNumber
+                - amount
+                - user
+                - ticketID
+      responses:
+        '200':
+          description: Payment successful
+  
+        '400':
+          description: Invalid card or amount
+
+ 
